@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Komunitas Petani</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #60ad5e;
+            --primary-dark: #005005;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        /* Color Classes */
+        .bg-primary {
+            background-color: var(--primary);
+        }
+        
+        .text-primary {
+            color: var(--primary);
+        }
+        
+        .border-primary {
+            border-color: var(--primary);
+        }
+        
+        /* Button Classes */
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .category-hama { background-color: #ffebee; color: #c62828; }
+        .category-cuaca { background-color: #e3f2fd; color: #1565c0; }
+        .category-panen { background-color: #e8f5e9; color: #2e7d32; }
+        .category-teknologi { background-color: #f3e5f5; color: #6a1b9a; }
+        .category-pupuk { background-color: #fff8e1; color: #ff8f00; }
+        
+        @media (max-width: 640px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page (Initially Visible) -->
+    <div id="login-page" class="min-h-screen flex flex-col justify-center items-center p-4 bg-gray-50">
+        <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+            <div class="text-center mb-8">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7811738f-d9e0-40c9-9db2-37b6804b8811.png" alt="Logo Komunitas Petani" class="mx-auto mb-4 rounded-full w-20 h-20 object-cover">
+                <h1 class="text-3xl font-bold text-primary">Komunitas Petani</h1>
+                <p class="text-gray-600">Solusi untuk petani modern</p>
+            </div>
+            
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email/Username</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" id="email" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="masukkan email atau username">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="masukkan password">
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember-me" type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-700">Ingat saya</label>
+                    </div>
+                    
+                    <a href="#" class="text-sm text-primary hover:underline">Lupa password?</a>
+                </div>
+                
+                <button type="submit" class="w-full btn-primary py-2 px-4 rounded-md font-medium transition duration-150">Masuk</button>
+                
+                <div class="text-center text-sm text-gray-600">
+                    Belum punya akun? <a href="#" id="register-link" class="text-primary hover:underline font-medium">Daftar disini</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Registration Page (Initially Hidden) -->
+    <div id="register-page" class="min-h-screen hidden flex flex-col justify-center items-center p-4 bg-gray-50">
+        <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8 mx-auto">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-primary">Daftar Akun Baru</h1>
+                <p class="text-gray-600">Bergabung dengan komunitas petani kami</p>
+            </div>
+            
+            <form id="register-form" class="space-y-4 text-center">
+                <!-- Nama Lengkap Field -->
+                <div class="text-center">
+                    <label for="reg-name" class="block text-sm font-medium text-gray-700 mb-1 text-center">Nama Lengkap</label>
+                    <div class="relative mx-auto max-w-xs">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" id="reg-name" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Masukkan nama lengkap">
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <label for="reg-email" class="block text-sm font-medium text-gray-700 mb-1 text-center">Email</label>
+                    <input type="email" id="reg-email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary mx-auto max-w-xs" placeholder="Masukkan email">
+                </div>
+                
+                <div class="text-center">
+                    <label for="reg-password" class="block text-sm font-medium text-gray-700 mb-1 text-center">Password</label>
+                    <input type="password" id="reg-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary mx-auto max-w-xs" placeholder="Buat password">
+                </div>
+                
+                <div>
+                    <label for="reg-confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
+                    <input type="password" id="reg-confirm-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Ulangi password">
+                </div>
+                
+                <div class="text-center">
+                    <button type="submit" class="btn-primary py-2 px-6 rounded-md font-medium transition duration-150 mx-auto w-full max-w-xs">Daftar</button>
+                </div>
+                
+                <div class="text-center text-sm text-gray-600">
+                    Sudah punya akun? <a href="#" id="login-link" class="text-primary hover:underline font-medium">Masuk disini</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App (Initially Hidden) -->
+    <div id="app" class="hidden">
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-button" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded shadow text-primary">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-white shadow-lg overflow-y-auto z-40">
+            <div class="p-4 flex items-center bg-primary text-white">
+                <span class="font-bold text-lg">Komunitas Petani</span>
+            </div>
+            
+            <div class="p-4 border-b">
+                <div class="flex items-center space-x-3">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ef506232-335f-4630-80b3-cfa72216f5ab.png" alt="User profile" class="rounded-full w-10 h-10 object-cover">
+                    <div>
+                        <div class="font-medium">Selamat datang,</div>
+                        <div id="username" class="font-bold">Petani</div>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="p-4 border-t border-gray-200">
+                <ul class="space-y-2 transition-all duration-200">
+                    <li>
+                        <a href="#beranda" class="flex items-center px-3 py-2 rounded hover:bg-gray-100 text-primary font-medium">
+                            <i class="fas fa-home mr-3"></i> Beranda
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#forum" class="flex items-center px-3 py-2 rounded hover:bg-gray-100">
+                            <i class="fas fa-comments mr-3"></i> Forum Diskusi
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#buat-topik" class="flex items-center px-3 py-2 rounded hover:bg-gray-100">
+                            <i class="fas fa-plus-circle mr-3"></i> Buat Topik
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#dashboard" class="flex items-center px-3 py-2 rounded hover:bg-gray-100">
+                            <i class="fas fa-chart-bar mr-3"></i> Dashboard Komunitas
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#logout" class="flex items-center px-3 py-2 rounded hover:bg-gray-100 text-red-600 font-medium">
+                            <i class="fas fa-sign-out-alt mr-3"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="md:ml-64 min-h-screen">
+            <!-- Header -->
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                    <div class="relative w-full max-w-md">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" placeholder="Cari topik..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <button class="p-2 text-gray-600 hover:text-primary relative">
+                            <i class="fas fa-bell"></i>
+                            <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                        </button>
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/64a7713c-782d-4e9e-b6fe-1e1f99882cc6.png" alt="User profile" class="rounded-full w-8 h-8 object-cover">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Sections -->
+            <main>
+                <!-- Beranda -->
+                <section id="beranda" class="section active p-6">
+                    <div class="max-w-7xl mx-auto">
+                        <h1 class="text-2xl font-bold text-gray-800 mb-6">Selamat datang, <span id="beranda-username">Petani</span></h1>
+                        
+                        <!-- Info Terbaru -->
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h2 class="text-lg font-semibold text-primary mb-4 flex items-center">
+                                <i class="fas fa-info-circle mr-2"></i> Info Terbaru
+                            </h2>
+                            
+                            <div class="space-y-4">
+                                <div class="p-4 border border-gray-200 rounded-lg">
+                                    <h3 class="font-medium text-gray-800">Pelatihan Teknologi Pertanian Modern</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Dinas Pertanian akan mengadakan pelatihan penggunaan drone untuk pemantauan tanaman pada tanggal 15 Juli 2023.</p>
+                                    <div class="mt-2 text-xs text-gray-500">Diposting: 2 hari yang lalu</div>
+                                </div>
+                                
+                                <div class="p-4 border border-gray-200 rounded-lg">
+                                    <h3 class="font-medium text-gray-800">Peringatan Hama Wereng</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Telah dilaporkan serangan wereng di beberapa wilayah. Segera lakukan pengendalian dengan cara yang direkomendasikan.</p>
+                                    <div class="mt-2 text-xs text-gray-500">Diposting: 5 hari yang lalu</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Navigasi Cepat -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <a href="#forum" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200 border border-gray-200">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="mb-3 p-3 bg-green-50 rounded-full text-primary">
+                                        <i class="fas fa-comments text-2xl"></i>
+                                    </div>
+                                    <h3 class="font-medium">Forum Diskusi</h3>
+                                </div>
+                            </a>
+                            
+                            <a href="#buat-topik" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200 border border-gray-200">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="mb-3 p-3 bg-green-50 rounded-full text-primary">
+                                        <i class="fas fa-plus-circle text-2xl"></i>
+                                    </div>
+                                    <h3 class="font-medium">Buat Topik</h3>
+                                </div>
+                            </a>
+                            
+                            <a href="#dashboard" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200 border border-gray-200">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="mb-3 p-3 bg-green-50 rounded-full text-primary">
+                                        <i class="fas fa-chart-bar text-2xl"></i>
+                                    </div>
+                                    <h3 class="font-medium">Dashboard Komunitas</h3>
+                                </div>
+                            </a>
+                            
+                            <a href="#" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200 border border-gray-200">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="mb-3 p-3 bg-green-50 rounded-full text-primary">
+                                        <i class="fas fa-book text-2xl"></i>
+                                    </div>
+                                    <h3 class="font-medium">Panduan</h3>
+                                </div>
+                            </a>
+                        </div>
+                        
+                        <!-- Topik Populer -->
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold text-primary mb-4 flex items-center">
+                                <i class="fas fa-fire mr-2"></i> Topik Populer
+                            </h2>
+                            
+                            <div class="space-y-4">
+                                <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">Cara mengatasi hama wereng yang efektif</h3>
+                                            <div class="flex items-center mt-1 space-x-3 text-xs text-gray-500">
+                                                <span>Oleh: Ahmad Sudrajat</span>
+                                                <span>•</span>
+                                                <span>15 Juli 2023</span>
+                                            </div>
+                                        </div>
+                                        <span class="category-badge category-hama">Hama</span>
+                                    </div>
+                                    <div class="mt-2 flex items-center text-xs text-gray-500">
+                                        <i class="fas fa-comment mr-1"></i> 24 komentar
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">Prediksi cuaca untuk musim tanam berikutnya</h3>
+                                            <div class="flex items-center mt-1 space-x-3 text-xs text-gray-500">
+                                                <span>Oleh: Budi Santoso</span>
+                                                <span>•</span>
+                                                <span>12 Juli 2023</span>
+                                            </div>
+                                        </div>
+                                        <span class="category-badge category-cuaca">Cuaca</span>
+                                    </div>
+                                    <div class="mt-2 flex items-center text-xs text-gray-500">
+                                        <i class="fas fa-comment mr-1"></i> 16 komentar
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Forum Diskusi -->
+                <section id="forum" class="section hidden p-6">
+                    <div class="max-w-7xl mx-auto">
+                        <h1 class="text-2xl font-bold text-gray-800 mb-6">Forum Diskusi</h1>
+                        
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <!-- Filter Kategori -->
+                            <div class="w-full md:w-64 flex-shrink-0">
+                                <div class="bg-white rounded-lg shadow-md p-4 sticky top-4">
+                                    <h3 class="font-semibold text-lg text-primary mb-3">Filter Kategori</h3>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="filter-hama" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded mr-2" checked>
+                                            <label for="filter-hama" class="ml-2 text-sm text-gray-700">Hama</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="filter-cuaca" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" checked>
+                                            <label for="filter-cuaca" class="ml-2 text-sm text-gray-700">Cuaca</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="filter-panen" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" checked>
+                                            <label for="filter-panen" class="ml-2 text-sm text-gray-700">Panen</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="filter-teknologi" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" checked>
+                                            <label for="filter-teknologi" class="ml-2 text-sm text-gray-700">Teknologi</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="filter-pupuk" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" checked>
+                                            <label for="filter-pupuk" class="ml-2 text-sm text-gray-700">Pupuk</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Daftar Topik -->
+                            <div class="flex-grow">
+                                <div class="bg-white rounded-lg shadow-md p-6">
+                                    <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                        <h2 class="text-lg font-semibold text-gray-800 mb-2 sm:mb-0">Semua Topik</h2>
+                                        <div class="relative">
+                                            <select class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm rounded-md">
+                                                <option>Urutkan Terbaru</option>
+                                                <option>Urutkan Terpopuler</option>
+                                                <option>Urutkan Komentar Terbanyak</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="space-y-4">
+                                        <!-- Topik 1 -->
+                                        <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-all duration-200 hover:shadow-md" data-category="hama">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <h3 class="font-medium text-gray-800">Cara mengatasi hama wereng yang efektif</h3>
+                                                    <div class="flex items-center mt-1 space-x-3 text-xs text-gray-500">
+                                                        <span>Oleh: Ahmad Sudrajat</span>
+                                                        <span>•</span>
+                                                        <span>15 Juli 2023</span>
+                                                    </div>
+                                                </div>
+                                                <span class="category-badge category-hama">Hama</span>
+                                            </div>
+                                            <div class="mt-2 flex items-center text-xs text-gray-500">
+                                                <i class="fas fa-comment mr-1"></i> 24 komentar
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Topik 2 -->
+                                        <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" data-category="cuaca">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <h3 class="font-medium text-gray-800">Prediksi cuaca untuk musim tanam berikutnya</h3>
+                                                    <div class="flex items-center mt-1 space-x-3 text-xs text-gray-500">
+                                                        <span>Oleh: Budi Santoso</span>
+                                                        <span>•</span>
+                                                        <span>12 Juli 2023</span>
+                                                    </div>
+                                                </div>
+                                                <span class="category-badge category-cuaca">Cuaca</span>
+                                            </div>
+                                            <div class="mt-2 flex items-center text-xs text-gray-500">
+                                                <i class="fas fa-comment mr-1"></i> 16 komentar
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Topik 3 -->
+                                        <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" data-category="pupuk">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <h3 class="font-medium text-gray-800">Pupuk organik vs kimia, mana yang lebih baik?</h3>
+                                                    <div class="flex items-center mt-1 space-x-3 text-xs text-gray-500">
+                                                        <span>Oleh: Siti Rahayu</span>
+                                                        <span>•</span>
+                                                        <span>10 Juli 2023</span>
+                                                    </div>
+                                                </div>
+                                                <span class="category-badge category-pupuk">Pupuk</span>
+                                            </div>
+                                            <div class="mt-2 flex items-center text-xs text-gray-500">
+                                                <i class="fas fa-comment mr-1"></i> 32 komentar
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Topik 4 -->
+                                        <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" data-category="teknologi">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <h3 class="font-medium text-gray-800">Pengalaman menggunakan IoT untuk monitoring tanaman</h3>
+                                                    <div class="flex items-center mt-1 space-x-3 text-xs text-gray-500">
+                                                        <span>Oleh: Teguh Wijaya</span>
+                                                        <span>•</span>
+                                                        <span>8 Juli 2023</span>
+                                                    </div>
+                                                </div>
+                                                <span class="category-badge category-teknologi">Teknologi</span>
+                                            </div>
+                                            <div class="mt-2 flex items-center text-xs text-gray-500">
+                                                <i class="fas fa-comment mr-1"></i> 12 komentar
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Topik 5 -->
+                                        <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" data-category="panen">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <h3 class="font-medium text-gray-800">Teknik panen padi yang meningkatkan hasil</h3>
+                                                    <div class="flex items-center mt-1 space-x-3 text-xs text-gray-500">
+                                                        <span>Oleh: Joko Prasetyo</span>
+                                                        <span>•</span>
+                                                        <span>5 Juli 2023</span>
+                                                    </div>
+                                                </div>
+                                                <span class="category-badge category-panen">Panen</span>
+                                            </div>
+                                            <div class="mt-2 flex items-center text-xs text-gray-500">
+                                                <i class="fas fa-comment mr-1"></i> 18 komentar
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Pagination -->
+                                    <div class="mt-6 flex justify-center">
+                                        <nav class="relative z-0 inline-flex shadow-sm">
+                                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <i class="fas fa-chevron-left text-gray-600 hover:text-primary"></i>
+                                            </a>
+                                            <a href="#" class="bg-primary text-white relative inline-flex items-center px-4 py-2 border border-primary text-sm font-medium">
+                                                1
+                                            </a>
+                                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                                2
+                                            </a>
+                                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                                3
+                                            </a>
+                                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Create New Topic Section -->
+                <section id="buat-topik" class="section hidden p-6" data-section="new-topic">
+                    <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-md p-6">
+                        <h1 class="text-2xl font-bold text-gray-800 mb-6">Buat Topik Baru</h1>
+                        
+                        <form class="space-y-4">
+                            <div>
+                                <label for="judul-topik" class="block text-sm font-medium text-gray-700 mb-1">Judul Topik</label>
+                                <input type="text" id="judul-topik" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Masukkan judul topik">
+                            </div>
+                            
+                            <div>
+                                <label for="kategori-topik" class="block text-sm font-medium text-gray-700 mb-1">Pilih Kategori</label>
+                                <select id="kategori-topik" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                                    <option value="">-- Pilih Kategori --</option>
+                                    <option value="hama">Hama</option>
+                                    <option value="cuaca">Cuaca</option>
+                                    <option value="panen">Panen</option>
+                                    <option value="teknologi">Teknologi</option>
+                                    <option value="pupuk">Pupuk</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="isi-topik" class="block text-sm font-medium text-gray-700 mb-1">Isi Topik</label>
+                                <textarea id="isi-topik" rows="10" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Tulis isi topik Anda disini..."></textarea>
+                            </div>
+                            
+                            <div>
+                                <button type="submit" class="btn-primary py-2 px-6 rounded-md font-medium">Kirim</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Komentar pada Topik -->
+                <section id="komentar-topik" class="section hidden p-6">
+                    <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-6">
+                            <button id="back-to-forum" class="text-primary mr-4">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <h1 class="text-2xl font-bold text-gray-800">Komentar pada Topik</h1>
+                        </div>
+                        
+                        <!-- Topik Utama -->
+                        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                            <div class="flex items-start mb-4">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/45ad47ea-9825-437d-bebd-b6ca8ad19402.png" alt="Buat Topik Profil" class="rounded-full mr-3 w-10 h-10 object-cover border-2 border-gray-200">
+                                <div>
+                                    <div class="flex items-center">
+                                        <span class="font-semibold">Ahmad Sudrajat</span>
+                                        <span class="mx-2 text-gray-500">•</span>
+                                        <span class="text-sm text-gray-500">15 Juli 2023</span>
+                                    </div>
+                                    <span class="category-badge category-hama">Hama</span>
+                                </div>
+                            </div>
+                            
+                            <h2 class="text-xl font-bold text-gray-800 mb-3">Cara mengatasi hama wereng yang efektif</h2>
+                            
+                            <div class="text-gray-700 mb-4">
+                                <p>Halo rekan-rekan petani, akhir-akhir ini saya mengalami serangan wereng yang cukup parah di sawah saya. Sudah mencoba beberapa insektisida tetapi kurang efektif. Ada yang punya pengalaman mengatasi hama wereng? Apa saja cara yang efektif untuk mengendalikan hama ini?</p>
+                                <p class="mt-3">Saya menggunakan varietas tanaman yang cukup resisten, tetapi tetap saja populasinya tinggi setelah musim hujan lalu.</p>
+                            </div>
+                            
+                            <div class="flex items-center text-sm text-gray-500 space-x-4">
+                                <div class="flex items-center">
+                                    <i class="fas fa-comment mr-1"></i>
+                                    <span>24 komentar</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="far fa-eye mr-1"></i>
+                                    <span>157 dilihat</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Komentar -->
+                        <div class="space-y-6 mb-6">
+                            <!-- Komentar 1 -->
+                            <div class="border-b border-gray-200 pb-6">
+                                <div class="flex items-start mb-3">
+                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e923747c-1b32-40b4-b67f-26cff05ac369.png" alt="Commenter profile" class="rounded-full mr-3 w-8 h-8 object-cover">
+                                    <div>
+                                        <div class="flex items-center">
+                                            <span class="font-semibold">Budi Santoso</span>
+                                            <span class="mx-2 text-gray-500">•</span>
+                                            <span class="text-sm text-gray-500">15 Juli 2023</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-gray-700 ml-12 mb-3">
+                                    <p>Saya juga mengalami masalah serupa di lapangan. Sejauh ini yang cukup efektif adalah penyemprotan dengan pestisida berbahan aktif fipronil atau imidacloprid dengan interval seminggu sekali selama 3-4 minggu berturut-turut. Juga penting untuk mengeringkan lahan beberapa hari untuk memutus siklus hidup wereng.</p>
+                                </div>
+                                
+                                <div class="flex items-center space-x-4 text-sm text-gray-500 ml-12">
+                                    <a href="#" class="flex items-center hover:text-primary">
+                                        <i class="far fa-thumbs-up mr-1"></i>
+                                        <span>12</span>
+                                    </a>
+                                    <a href="#" class="flex items-center hover:text-primary">
+                                        <i class="far fa-thumbs-down mr-1"></i>
+                                        <span>1</span>
+                                    </a>
+                                    <a href="#" class="hover:text-primary">Balas</a>
+                                </div>
+                            </div>
+                            
+                            <!-- Komentar 2 -->
+                            <div class="border-b border-gray-200 pb-6">
+                                <div class="flex items-start mb-3">
+                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0cac8af9-6ef9-45d8-9ce8-8fba2bc99adc.png" alt="Komentator Profil" class="rounded-full mr-3 w-10 h-10 object-cover border-2 border-gray-200">
+                                    <div>
+                                        <div class="flex items-center">
+                                            <span class="font-semibold">Siti Rahayu</span>
+                                            <span class="mx-2 text-gray-500">•</span>
+                                            <span class="text-sm text-gray-500">15 Juli 2023</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-gray-700 ml-12 mb-3">
+                                    <p>Selain pestisida kimia, bisa juga coba pengendalian hayati menggunakan jamur entomopatogen Beauveria bassiana atau predator seperti laba-laba lynx. Jangan lupa juga untuk menanam tanaman perangkap di sekitar lahan.</p>
+                                </div>
+                                
+                                <div class="flex items-center space-x-4 text-sm text-gray-500 ml-12">
+                                    <a href="#" class="flex items-center hover:text-primary">
+                                        <i class="far fa-thumbs-up mr-1"></i>
+                                        <span>8</span>
+                                    </a>
+                                    <a href="#" class="flex items-center hover:text-primary">
+                                        <i class="far fa-thumbs-down mr-1"></i>
+                                        <span>0</span>
+                                    </a>
+                                    <a href="#" class="hover:text-primary">Balas</a>
+                                </div>
+                                
+                                <!-- Balasan Komentar -->
+                                <div class="ml-12 mt-4 pl-4 border-l-2 border-gray-200">
+                                    <div class="flex items-start mb-3">
+                                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/07e22b01-c163-44cd-87df-319dfae6517a.png" alt="Balas Komentar Profil" class="rounded-full mr-3 w-8 h-8 object-cover border-2 border-gray-200">
+                                        <div>
+                                            <div class="flex items-center">
+                                                <span class="font-semibold">Teguh Wijaya</span>
+                                                <span class="mx-2 text-gray-500">•</span>
+                                                <span class="text-sm text-gray-500">15 Juli 2023</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-gray-700 mb-3">
+                                        <p>Apakah tanaman perangkap seperti tanaman kenikir benar-benar efektif? Berapa jarak tanam yang disarankan untuk tanaman perangkap ini?</p>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <a href="#" class="flex items-center hover:text-primary">
+                                            <i class="far fa-thumbs-up mr-1"></i>
+                                            <span>3</span>
+                                        </a>
+                                        <a href="#" class="flex items-center hover:text-primary">
+                                            <i class="far fa-thumbs-down mr-1"></i>
+                                            <span>0</span>
+                                        </a>
+                                        <a href="#" class="hover:text-primary">Balas</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Form Komentar -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Tambah Komentar</h3>
+                            <form>
+                                <textarea class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" rows="4" placeholder="Tulis komentar Anda disini..."></textarea>
+                                <div class="mt-3">
+                                    <button type="submit" class="btn-primary py-2 px-6 rounded-md font-medium">Kirim Komentar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dashboard Komunitas -->
+                <section id="dashboard" class="section hidden p-6">
+                    <div class="max-w-7xl mx-auto">
+                        <h1 class="text-2xl font-bold text-gray-800 mb-6">Dashboard Komunitas</h1>
+                        
+                        <!-- Ringkasan -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="bg-white rounded-lg shadow-md p-6 text-center transition-transform hover:scale-[1.02]">
+                                <div class="text-4xl font-bold text-primary mb-2">250</div>
+                                <div class="text-gray-600 font-medium">Total Pengguna</div>
+                                <div class="mt-2 text-sm text-gray-500">Petani: 250 (100%)</div>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                                <div class="text-4xl font-bold text-primary mb-2">80</div>
+                                <div class="text-gray-600 font-medium">Total Topik</div>
+                                <div class="mt-2 text-sm text-gray-500">30 Hari Terakhir: 12</div>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                                <div class="text-4xl font-bold text-primary mb-2">340</div>
+                                <div class="text-gray-600 font-medium">Total Komentar</div>
+                                <div class="mt-2 text-sm text-gray-500">30 Hari Terakhir: 86</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Statistik -->
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h2 class="text-lg font-semibold text-primary mb-4 flex items-center">
+                                <i class="fas fa-chart-line mr-2"></i> Statistik Aktivitas
+                            </h2>
+                            
+                            <div class="h-64">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1d4b50c0-6039-4492-9051-92d8c1ef76bd.png" alt="Community activity statistics" class="w-full h-full object-contain border border-gray-200 rounded-lg">
+                            </div>
+                            
+                            <div class="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <div class="p-3 border rounded-lg">
+                                    <div class="text-sm font-medium text-gray-500 mb-1">Topik Teraktif</div>
+                                    <div class="font-medium">Pupuk organik vs kimia</div>
+                                    <div class="text-xs text-gray-500">32 komentar</div>
+                                </div>
+                                <div class="p-3 border rounded-lg">
+                                    <div class="text-sm font-medium text-gray-500 mb-1">Pengguna Teraktif</div>
+                                    <div class="font-medium">Budi Santoso</div>
+                                    <div class="text-xs text-gray-500">48 kontribusi</div>
+                                </div>
+                                <div class="p-3 border rounded-lg">
+                                    <div class="text-sm font-medium text-gray-500 mb-1">Kategori Favorit</div>
+                                    <div class="font-medium">Hama</div>
+                                    <div class="text-xs text-gray-500">28 topik</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Kategori -->
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold text-primary mb-4 flex items-center">
+                                <i class="fas fa-tags mr-2"></i> Distribusi Kategori
+                            </h2>
+                            
+                            <div class="flex flex-col md:flex-row gap-6">
+                                <div class="md:w-1/2 h-64">
+                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/eec457ec-7ce2-442b-9c1e-214540c8971c.png" alt="Topic category distribution" class="w-full h-full object-contain border border-gray-200 rounded-lg">
+                                </div>
+                                <div class="md:w-1/2">
+                                    <div class="space-y-3">
+                                        <div>
+                                            <div class="flex justify-between text-sm mb-1">
+                                                <span>Hama</span>
+                                                <span>35% (28 topik)</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div class="bg-red-500 h-2.5 rounded-full" style="width: 35%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between text-sm mb-1">
+                                                <span>Cuaca</span>
+                                                <span>20% (16 topik)</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div class="bg-blue-500 h-2.5 rounded-full" style="width: 20%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between text-sm mb-1">
+                                                <span>Panen</span>
+                                                <span>15% (12 topik)</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div class="bg-green-500 h-2.5 rounded-full" style="width: 15%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between text-sm mb-1">
+                                                <span>Teknologi</span>
+                                                <span>20% (16 topik)</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div class="bg-purple-500 h-2.5 rounded-full" style="width: 20%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between text-sm mb-1">
+                                                <span>Pupuk</span>
+                                                <span>10% (8 topik)</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 10%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-6 text-sm text-gray-500">
+                                        <p>Dari data di atas, hama menjadi topik yang paling banyak dibahas oleh anggota komunitas, diikuti oleh teknologi dan cuaca.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // App Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            // Login
+            const loginForm = document.getElementById('login-form');
+            const loginPage = document.getElementById('login-page');
+            const registerPage = document.getElementById('register-page');
+            const app = document.getElementById('app');
+            const registerLink = document.getElementById('register-link');
+            const loginLink = document.getElementById('login-link');
+
+            // Toggle between login and register
+            registerLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginPage.classList.add('hidden');
+                registerPage.classList.remove('hidden');
+            });
+
+            loginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                registerPage.classList.add('hidden');
+                loginPage.classList.remove('hidden');
+            });
+            
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    loginPage.classList.add('hidden');
+                    app.classList.remove('hidden');
+                    
+                    // Update username in sidebar and home page
+                    const username = "Petani";
+                    document.getElementById('username').textContent = username;
+                    document.getElementById('beranda-username').textContent = username;
+                });
+            }
+            
+            // Mobile Menu
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (mobileMenuButton && sidebar) {
+                mobileMenuButton.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
+            
+            // Section Navigation
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('nav a');
+            
+            function showSection(sectionId) {
+                sections.forEach(section => {
+                    if (section.id === sectionId) {
+                        section.classList.remove('hidden');
+                        section.classList.add('active');
+                    } else {
+                        section.classList.add('hidden');
+                        section.classList.remove('active');
+                    }
+                });
+                
+                // Update active nav link
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === `#${sectionId}`) {
+                        link.classList.add('text-primary', 'font-medium');
+                        link.classList.remove('text-gray-700');
+                    } else {
+                        link.classList.remove('text-primary', 'font-medium');
+                        link.classList.add('text-gray-700');
+                    }
+                });
+            }
+            
+            // Handle nav link clicks
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('href').substring(1);
+                    showSection(sectionId);
+                });
+            });
+            
+            // Back to forum from topic
+            const backToForum = document.getElementById('back-to-forum');
+            if (backToForum) {
+                backToForum.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showSection('forum');
+                });
+            }
+            
+            // Show topic from forum list
+            const topicItems = document.querySelectorAll('[data-category]');
+            topicItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    showSection('komentar-topik');
+                });
+            });
+            
+            // Initialize first section
+            showSection('beranda');
+
+            // Handle logout
+            const logoutLink = document.querySelector('a[href="#logout"]');
+            logoutLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                app.classList.add('hidden');
+                loginPage.classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
